@@ -1,6 +1,7 @@
 package configuration.retrieve;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.MalformedInputException;
@@ -13,25 +14,35 @@ public class Connection {
     public static void main(String[] args) {
         URL url = null;
         URLConnection con = null;
-        int i;
+
+
         try {
             url = new URL("http://localhost:8080/jenkins/api/xml");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
             con = url.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            File file = new File("Address.txt");
+
+        try {
             BufferedInputStream bis = new BufferedInputStream(con.getInputStream());
-            System.out.println("File is --->" + url.getContent());
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file.getName()));
-            	            while ((i = bis.read()) != -1) {
-                                bos.write(i);
-                            }
-            	            bos.flush();
-            	            bis.close();
-            	        } catch (MalformedInputException malformedInputException) {
-            	            malformedInputException.printStackTrace();
-            	        } catch (IOException ioException) {
-            	            ioException.printStackTrace();
-            	        }
-        	    }
 
+            System.out.println("File is --->" + url.getContent());
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    con.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null)
+                System.out.println(inputLine);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
 }
